@@ -5,7 +5,7 @@
 #SBATCH --mem=175G
 #SBATCH --account=def-hpcg1626
 #SBATCH --qos=gpu
-#SBATCH --time=8:00:0
+#SBATCH --time=12:00:0
 #SBATCH --partition=gpu
 #SBATCH --gres gpu:1
 #SBATCH --mail-type=begin          # send email when job ends

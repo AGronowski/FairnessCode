@@ -73,6 +73,7 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
     # sets model in evalutation mode
     model.eval()
     predictor = sklearn.linear_model.LogisticRegression()
+    # predictor = sklearn.ensemble.RandomForestClassifier()
     with torch.no_grad():
         '''train '''
         # X_train,Y_train,A_train = trainset.images, trainset.targets, trainset.sensitives
@@ -146,7 +147,7 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
 
 
 
-def evaluate(model,dataset,batch_size,numworkers,fair,beta,epoch,debugging,device,dataset_type):
+def evaluate(model,dataset,batch_size,numworkers,method,beta,epoch,debugging,device,dataset_type,alpha):
     # sets model in evalutation mode
     model.eval()
     testloss_history = []
@@ -160,19 +161,21 @@ def evaluate(model,dataset,batch_size,numworkers,fair,beta,epoch,debugging,devic
 
     with torch.no_grad():
         for x, y, a in tqdm(testdataloader, disable=not (debugging)):
-
             x = x.to(device).float()  # batch size x input_dim
             y = y.to(device).float()  # batch size x 1
             a = a.to(device).float()
 
             yhat, yhat_fair, mu, logvar = model(x, a)
 
-            if fair:
-                output = yhat_fair
-            else:
-                output = yhat
-
-            loss = cost_functions.get_loss(output, y, mu, logvar, beta)
+            # IB loss
+            if method == 0:
+                loss = cost_functions.get_IB_or_Skoglund_loss(yhat, y, mu, logvar, beta,alpha)
+            # Skoglund loss
+            elif method == 1:
+                loss = Skoglund_loss = cost_functions.get_IB_or_Skoglund_loss(yhat_fair, y, mu, logvar, beta,alpha)
+            # Combined loss
+            elif method == 2:
+                loss = Combined_loss = cost_functions.get_combined_loss(yhat, yhat_fair, y, mu, logvar, beta,alpha)
 
             # output = baseline(x)
             # loss = torch.nn.functional.binary_cross_entropy(output.view(-1), y.view(-1),
@@ -182,29 +185,29 @@ def evaluate(model,dataset,batch_size,numworkers,fair,beta,epoch,debugging,devic
             testloss += loss.item()  # item gives tensors value as float
 
             # get predictions
-            predictions = output.cpu().view(-1).detach().numpy()
-            predictions[predictions < 0.5] = 0
-            predictions[predictions > 0.5] = 1
-            a = a.cpu().detach().numpy()
-            y = y.cpu().detach().numpy()
-
-            accuracy += metrics.get_accuracy(predictions, y)
-            disc += metrics.get_discrimination(predictions, a)
-            eqodds += metrics.get_equalized_odds_gap(predictions, y, a)
-            accgap += metrics.get_acc_gap(predictions, y, a)
+            # predictions = output.cpu().view(-1).detach().numpy()
+            # predictions[predictions < 0.5] = 0
+            # predictions[predictions > 0.5] = 1
+            # a = a.cpu().detach().numpy()
+            # y = y.cpu().detach().numpy()
+            #
+            # accuracy += metrics.get_accuracy(predictions, y)
+            # disc += metrics.get_discrimination(predictions, a)
+            # eqodds += metrics.get_equalized_odds_gap(predictions, y, a)
+            # accgap += metrics.get_acc_gap(predictions, y, a)
 
     testloss /= len(testdataloader)
-    accuracy /= len(testdataloader)
-    accgap /= len(testdataloader)
-    disc /= len(testdataloader)
-    eqodds /= len(testdataloader)
-
-    testloss_history.append(testloss)
+    # accuracy /= len(testdataloader)
+    # accgap /= len(testdataloader)
+    # disc /= len(testdataloader)
+    # eqodds /= len(testdataloader)
+    #
+    # testloss_history.append(testloss)
 
     print(f"epoch {epoch}")
     print(f"{dataset_type} loss {testloss}")
-    print(f"{dataset_type} accuracy {accuracy}")
-    print(f"{dataset_type} accgap {accgap}")
-    print(f"{dataset_type} disc {disc}")
-    print(f"{dataset_type} eqodds {eqodds}")
+    # print(f"{dataset_type} accuracy {accuracy}")
+    # print(f"{dataset_type} accgap {accgap}")
+    # print(f"{dataset_type} disc {disc}")
+    # print(f"{dataset_type} eqodds {eqodds}")
 

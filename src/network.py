@@ -129,19 +129,25 @@ class Decoder(nn.Module):
         # )
 
         self.lin_1 = torch.nn.Sequential(
-            torch.nn.Linear(latent_dim,100),
-            torch.nn.BatchNorm1d(100),
+            torch.nn.Linear(latent_dim,101),
+            torch.nn.BatchNorm1d(101),
             torch.nn.ReLU6(),
         )
         self.lin_2 = torch.nn.Sequential(
             # torch.nn.Linear(101,50*5*5),
-            torch.nn.Linear(100, 1),
-            torch.nn.Sigmoid()
+            torch.nn.Linear(101, 1),
+            # torch.nn.Sigmoid()
+        )
+
+        self.onelayer = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim, 1),
+            # torch.nn.Sigmoid()
         )
 
     def forward(self,z):
-        z = self.lin_1(z)
-        z = self.lin_2(z)
+        # z = self.lin_1(z)
+        z = self.onelayer(z)
+        # z = self.lin_2(z)
         return z
 
 class FairDecoder(nn.Module):
@@ -161,7 +167,7 @@ class FairDecoder(nn.Module):
         self.lin_2 = torch.nn.Sequential(
             # torch.nn.Linear(101,50*5*5),
             torch.nn.Linear(101, 1),
-            torch.nn.Sigmoid()
+            # torch.nn.Sigmoid()
         )
 
 
@@ -176,13 +182,21 @@ class FairDecoder(nn.Module):
             torch.nn.Sigmoid()
         )
 
+        self.onelayer = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim+1, 1),
+            # torch.nn.Sigmoid()
+        )
+
     def forward(self, z,a):
         a = a.view(-1,1)
-        z = self.lin_1(torch.cat((z,a),1))
-        z = self.lin_2(torch.cat((z,a),1))
+        # z = self.lin_1(torch.cat((z,a),1))
+        # z = self.lin_2(torch.cat((z,a),1))
+
+
         # z = z.view(-1,50,5,5)
         # output = self.conv(z + a.view((-1,) + (1,) * (len(z.shape) - 1)))
 
+        z = self.onelayer(torch.cat((z,a),1))
         return z
         # return self.func(torch.cat((z,a),dim=1))
 
@@ -222,6 +236,84 @@ class VAE(nn.Module):
 
     def getz(self,x):
         return self.encoder(x)
+
+
+class EncoderTabular(torch.nn.Module):
+
+    def __init__(self, input_dim, latent_dim):
+        super(EncoderTabular, self).__init__()
+        self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
+
+        self.fc1 = nn.Linear(100, latent_dim)
+        self.fc2 = nn.Linear(100, latent_dim)
+
+        # neural net with single 100 node ReLU layer
+        self.func = torch.nn.Sequential(
+            torch.nn.Linear(input_dim, 100),
+            torch.nn.ReLU(),
+        )
+
+    def reparametrize(self,mu,logvar):
+        std = torch.exp(0.5*logvar)
+        eps = torch.rand_like(std,device=self.device)
+        return mu + std*eps
+
+
+    def forward(self, x):
+        x = self.func(x)
+        mu = self.fc1(x)
+        logvar = self.fc2(x)
+        z = self.reparametrize(mu,logvar)
+        return z, mu, logvar
+
+# Decoder for the Skoglund I(Z;Y|A) lower bound
+class FairDecoderTabular(torch.nn.Module):
+
+    def __init__(self, latent_dim):
+        super(FairDecoderTabular, self).__init__()
+
+
+        self.func = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim + 1, 100),
+            torch.nn.ReLU(),
+            torch.nn.Linear(100, 1),  # output_dim = [1]
+        )
+
+    def forward(self, z, a):
+        return self.func(torch.cat((z,a),1))  # 981 x 3 tensor, binary s attribute added to the2 dimensions of Z
+
+# Decoder for the Skoglund I(Z;Y|A) lower bound
+class DecoderTabular(torch.nn.Module):
+
+    def __init__(self, latent_dim):
+        super(DecoderTabular, self).__init__()
+
+
+        self.func = torch.nn.Sequential(
+            torch.nn.Linear(latent_dim + 1, 100),
+            torch.nn.ReLU(),
+            torch.nn.Linear(100, 1),  # output_dim = [1]
+        )
+
+    def forward(self, z):
+        return self.func(z)
+
+
+class VAETabular(torch.nn.Module):
+
+    def __init__(self, latent_dim,input_dim):
+        super().__init__()
+
+        self.encoder = EncoderTabular(latent_dim,input_dim)
+        self.decoder = DecoderTabular(latent_dim)
+        self.fair_decoder = FairDecoderTabular(latent_dim)
+
+    def forward(self, x, a):
+        z, mu, logvar = self.encoder(x)
+        yhat = self.decoder(z)
+        yhat_fair = self.fair_decoder(z, a)
+
+        return yhat, yhat_fair, mu, logvar
 
 # custom weights initialization called on netG and netD
 def weights_init(m):
