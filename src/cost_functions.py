@@ -16,7 +16,7 @@ def renyi_cross_entropy(yhat,y,alpha):
     reduced = renyi_cross_entropy.sum()
     return reduced
 
-def renyi_divergence(mu,log_sigma_star,alpha=0.3):
+def renyi_divergence_old(mu,log_sigma_star,alpha=0.3):
     #use encoder's output as sigma_star instead of logvar
 
     # sigma_star = log_sigma_star.exp()
@@ -46,6 +46,19 @@ def renyi_divergence(mu,log_sigma_star,alpha=0.3):
     total = term1 + term2 + term3
     return torch.sum(total)
 
+def renyi_divergence(mu,log_var,alpha):
+    var = log_var.exp()
+    sigma_star = alpha + (1-alpha)*var
+    term1 = alpha /2 * mu.pow(2) * sigma_star
+
+    term2_1 = var.pow(1-alpha)
+    term2_2 = torch.log(sigma_star/term2_1)
+    term2 = -0.5 / (alpha-1) * term2_2
+
+    total = term1 + term2
+    #sums in both dimensions
+    return torch.sum(total)
+
 
 
 def get_IB_or_Skoglund_loss(yhat, y, mu, logvar, beta,alpha):
@@ -62,7 +75,8 @@ def get_IB_or_Skoglund_loss(yhat, y, mu, logvar, beta,alpha):
         divergence = KLD = -0.5 * torch.sum(1 + logvar - mu.pow(2) - logvar.exp())
     else:
         divergence = renyi_divergence(mu,logvar,alpha)
-    # print('divergence = KL')
+        # divergence2 = renyi_divergence_old(mu,logvar)
+        # print('divergence = KL')
 
 
 

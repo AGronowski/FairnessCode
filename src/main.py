@@ -10,10 +10,12 @@ import dataset
 import metrics
 import cost_functions
 import evaluations
+from early_stopping import EarlyStopping
 from tqdm import tqdm
 from progressbar import progressbar
 import matplotlib.pyplot as plt
 import torchvision.utils as vutils
+from torch.utils.data.sampler import SubsetRandomSampler
 start_time = time.time()
 
 torch.manual_seed(2021)
@@ -29,23 +31,26 @@ else:
     debugging = False
 
 
+
+
 #@profile
 def main():
     # print(device)
 
-    epochs = 10
+    epochs = 300
     batch_size = 128
-    latent_dim = 256
+    latent_dim = 2
 
-    dataset_type = 2
-    alpha =1
+    dataset_type = 4
+    alpha = 1
     datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh']
     '''
     0 - CelebA_gender
     1 - CelebA_race
     2 - EyePACS
     '''
-    for method in [0,1,2]:
+    betas = [30]
+    for method in [1]:
         methods = ["IB","Skoglund","Combined"]
         '''
         0 - IB
@@ -67,7 +72,33 @@ def main():
             print("error")
 
 
-        dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+        stop_early = True
+
+        if stop_early:
+            early_stopping = EarlyStopping()
+            validation_split = .2
+
+            # Creating data indices for training and validation splits:
+            dataset_size = len(train_set)
+            indices = list(range(dataset_size))
+            split = int(np.floor(validation_split * dataset_size))
+            np.random.shuffle(indices)
+            train_indices, val_indices = indices[split:], indices[:split]
+
+            # Creating PT data samplers and loaders:
+            train_sampler = SubsetRandomSampler(train_indices)
+            valid_sampler = SubsetRandomSampler(val_indices)
+
+            dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+                                             sampler=train_sampler,num_workers=numworkers)
+
+            val_dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+                                             sampler=valid_sampler,num_workers=numworkers)
+        else:
+            dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+                                             shuffle=True,num_workers=numworkers)
+
+        test_dataloader = torch.utils.data.DataLoader(test_set,batch_size=batch_size,
                                              shuffle=True,num_workers=numworkers)
 
 
@@ -89,7 +120,6 @@ def main():
         # return
 
         # baseline = network.Baseline().to(device)
-        betas = [1]
         for beta in betas:
 
             loss_history =[]
@@ -133,13 +163,19 @@ def main():
                     #initiate gradient descent
                     optimizer.step()
 
+                if stop_early:
+                    val_epoch_loss = evaluations.evaluate(model,val_dataloader,method,beta,epoch,debugging,device,"Val",alpha)
+                    early_stopping(val_epoch_loss)
+                    if early_stopping.early_stop:
+                        break
+
                 train_loss /= len(dataloader)
                 # print(f'epoch = {epoch}')
                 # print(f'train loss {train_loss}')
                 loss_history.append(train_loss)
 
                 # evaluations.evaluate(model,train_set,batch_size,numworkers,fair,beta,epoch,debugging,device,"Train")
-                evaluations.evaluate(model,test_set,batch_size,numworkers,method,beta,epoch,debugging,device,"Test",alpha)
+                evaluations.evaluate(model,test_dataloader,method,beta,epoch,debugging,device,"Test",alpha)
                 evaluations.evaluate_logistic_regression(model, train_set, test_set,device,debugging,numworkers)
 
             # # Plot some training images

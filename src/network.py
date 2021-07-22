@@ -240,7 +240,7 @@ class VAE(nn.Module):
 
 class EncoderTabular(torch.nn.Module):
 
-    def __init__(self, input_dim, latent_dim):
+    def __init__(self, latent_dim,input_dim):
         super(EncoderTabular, self).__init__()
         self.device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
@@ -280,6 +280,7 @@ class FairDecoderTabular(torch.nn.Module):
         )
 
     def forward(self, z, a):
+        a = a.view(-1,1)
         return self.func(torch.cat((z,a),1))  # 981 x 3 tensor, binary s attribute added to the2 dimensions of Z
 
 # Decoder for the Skoglund I(Z;Y|A) lower bound
@@ -290,7 +291,7 @@ class DecoderTabular(torch.nn.Module):
 
 
         self.func = torch.nn.Sequential(
-            torch.nn.Linear(latent_dim + 1, 100),
+            torch.nn.Linear(latent_dim, 100),
             torch.nn.ReLU(),
             torch.nn.Linear(100, 1),  # output_dim = [1]
         )
@@ -314,6 +315,8 @@ class VAETabular(torch.nn.Module):
         yhat_fair = self.fair_decoder(z, a)
 
         return yhat, yhat_fair, mu, logvar
+    def getz(self,x):
+        return self.encoder(x)
 
 # custom weights initialization called on netG and netD
 def weights_init(m):

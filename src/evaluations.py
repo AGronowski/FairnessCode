@@ -146,13 +146,13 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
 
 
 
-
-def evaluate(model,dataset,batch_size,numworkers,method,beta,epoch,debugging,device,dataset_type,alpha):
+#gets loss
+def evaluate(model,dataloader,method,beta,epoch,debugging,device,dataset_type,alpha):
     # sets model in evalutation mode
     model.eval()
     testloss_history = []
-    testdataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
-                                                 shuffle=True, num_workers=numworkers)
+    # testdataloader = torch.utils.data.DataLoader(dataset, batch_size=batch_size,
+    #                                              shuffle=True, num_workers=numworkers)
     accuracy = 0
     accgap = 0
     disc = 0
@@ -160,7 +160,7 @@ def evaluate(model,dataset,batch_size,numworkers,method,beta,epoch,debugging,dev
     testloss = 0
 
     with torch.no_grad():
-        for x, y, a in tqdm(testdataloader, disable=not (debugging)):
+        for x, y, a in tqdm(dataloader, disable=not (debugging)):
             x = x.to(device).float()  # batch size x input_dim
             y = y.to(device).float()  # batch size x 1
             a = a.to(device).float()
@@ -196,7 +196,7 @@ def evaluate(model,dataset,batch_size,numworkers,method,beta,epoch,debugging,dev
             # eqodds += metrics.get_equalized_odds_gap(predictions, y, a)
             # accgap += metrics.get_acc_gap(predictions, y, a)
 
-    testloss /= len(testdataloader)
+    testloss /= len(dataloader)
     # accuracy /= len(testdataloader)
     # accgap /= len(testdataloader)
     # disc /= len(testdataloader)
@@ -206,6 +206,7 @@ def evaluate(model,dataset,batch_size,numworkers,method,beta,epoch,debugging,dev
 
     print(f"epoch {epoch}")
     print(f"{dataset_type} loss {testloss}")
+    return testloss
     # print(f"{dataset_type} accuracy {accuracy}")
     # print(f"{dataset_type} accgap {accgap}")
     # print(f"{dataset_type} disc {disc}")
