@@ -247,16 +247,22 @@ class EncoderTabular(torch.nn.Module):
         self.fc1 = nn.Linear(100, latent_dim)
         self.fc2 = nn.Linear(100, latent_dim)
 
+
+
         # neural net with single 100 node ReLU layer
         self.func = torch.nn.Sequential(
             torch.nn.Linear(input_dim, 100),
             torch.nn.ReLU(),
         )
 
+        self.logvar = torch.nn.Parameter(
+            torch.Tensor([-1.0]))
+
     def reparametrize(self,mu,logvar):
         std = torch.exp(0.5*logvar)
-        eps = torch.rand_like(std,device=self.device)
+        eps = torch.randn_like(std,device=self.device)
         return mu + std*eps
+
 
 
     def forward(self, x):

@@ -38,19 +38,19 @@ def main():
     # print(device)
 
     epochs = 300
-    batch_size = 128
+    batch_size = 5
     latent_dim = 2
 
-    dataset_type = 4
-    alpha = 1
+    dataset_type = 3
+    alpha = 0.3
     datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh']
     '''
     0 - CelebA_gender
     1 - CelebA_race
     2 - EyePACS
     '''
-    betas = [30]
-    for method in [1]:
+    betas = [1]
+    for method in [2]:
         methods = ["IB","Skoglund","Combined"]
         '''
         0 - IB
