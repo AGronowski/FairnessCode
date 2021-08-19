@@ -48,6 +48,7 @@ def renyi_divergence_old(mu,log_sigma_star,alpha=0.3):
 
 def renyi_divergence(mu,log_var,alpha):
     var = log_var.exp()
+
     sigma_star = alpha + (1-alpha)*var
     term1 = alpha /2 * mu.pow(2) * sigma_star
 

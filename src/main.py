@@ -1,20 +1,13 @@
 import torch
-import torch.nn as nn
 import numpy as np
-import sklearn.ensemble, sklearn.linear_model
-import sklearn.ensemble, sklearn.linear_model, sklearn.dummy, sklearn.metrics
-import os
 import time
 import network
 import dataset
-import metrics
 import cost_functions
 import evaluations
-from early_stopping import EarlyStopping
+from early_stopping import EarlyStopping, LRScheduler
 from tqdm import tqdm
-from progressbar import progressbar
-import matplotlib.pyplot as plt
-import torchvision.utils as vutils
+import umap_functions
 from torch.utils.data.sampler import SubsetRandomSampler
 start_time = time.time()
 
@@ -25,9 +18,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 if device == 'cpu':
     numworkers = 0 #SET TO 0 if running on CPU. Setting to 1 causes uncaught exception with debugger and python crashes
-    debugging = True
+    debugging = False
 else:
-    numworkers = 32
+    numworkers = 0
     debugging = False
 
 
@@ -37,20 +30,20 @@ else:
 def main():
     # print(device)
 
-    epochs = 300
-    batch_size = 5
+    umap = False
+
+    epochs = 50
+    batch_size =1024
     latent_dim = 2
 
     dataset_type = 3
-    alpha = 0.3
-    datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh']
+    datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh_age','Mh_gender']
     '''
     0 - CelebA_gender
     1 - CelebA_race
     2 - EyePACS
     '''
-    betas = [1]
-    for method in [2]:
+    for method in [1]:
         methods = ["IB","Skoglund","Combined"]
         '''
         0 - IB
@@ -66,34 +59,46 @@ def main():
         elif dataset_type ==3:
             train_set, test_set = dataset.get_adult()
         elif dataset_type == 4:
-            train_set, test_set = dataset.get_mh()
-
+            # train_set, test_set = dataset.get_mh()
+            train_set, test_set, valset = dataset.get_mh_balanced(4) #A = age
+        elif dataset_type == 5:
+            # train_set, test_set = dataset.get_mh()
+            train_set, test_set, valset = dataset.get_mh_balanced(5) #A = gender
         else:
             print("error")
 
 
-        stop_early = True
+        stop_early = False
+        lr_schedule =False
 
-        if stop_early:
+        if stop_early or lr_schedule:
             early_stopping = EarlyStopping()
-            validation_split = .2
 
-            # Creating data indices for training and validation splits:
-            dataset_size = len(train_set)
-            indices = list(range(dataset_size))
-            split = int(np.floor(validation_split * dataset_size))
-            np.random.shuffle(indices)
-            train_indices, val_indices = indices[split:], indices[:split]
+            if dataset != 4 and dataset_type != 5:
+                validation_split = .2
 
-            # Creating PT data samplers and loaders:
-            train_sampler = SubsetRandomSampler(train_indices)
-            valid_sampler = SubsetRandomSampler(val_indices)
+                # Creating data indices for training and validation splits:
+                dataset_size = len(train_set)
+                indices = list(range(dataset_size))
+                split = int(np.floor(validation_split * dataset_size))
+                np.random.shuffle(indices)
+                train_indices, val_indices = indices[split:], indices[:split]
 
-            dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
-                                             sampler=train_sampler,num_workers=numworkers)
+                # Creating PT data samplers and loaders:
+                train_sampler = SubsetRandomSampler(train_indices)
+                valid_sampler = SubsetRandomSampler(val_indices)
 
-            val_dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
-                                             sampler=valid_sampler,num_workers=numworkers)
+                dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+                                                 sampler=train_sampler,num_workers=numworkers)
+
+                val_dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
+                                                 sampler=valid_sampler,num_workers=numworkers)
+            else:
+                dataloader = torch.utils.data.DataLoader(train_set, batch_size=batch_size,
+                                                         shuffle=True, num_workers=numworkers)
+
+                val_dataloader = torch.utils.data.DataLoader(valset, batch_size=batch_size,
+                                                             shuffle=True, num_workers=numworkers)
         else:
             dataloader = torch.utils.data.DataLoader(train_set,batch_size=batch_size,
                                              shuffle=True,num_workers=numworkers)
@@ -107,22 +112,35 @@ def main():
         # #initialize weights
         # model.apply(main_network.weights_init)
 
-        if dataset_type <= 2:
-            model = network.VAE(latent_dim).to(device)
-        elif dataset_type == 3: #adult
-            model = network.VAETabular(latent_dim,13).to(device)
-        elif dataset_type == 4: #mh
-            model = network.VAETabular(latent_dim, 9).to(device)
-        # print(model)
-        optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+        # beta =1
+        alpha = 1
+        alphas = []
+        results = []
 
-        # evaluations.evaluate_logistic_regression_baseline(model,train_set,test_set,device,debugging,numworkers)
-        # return
 
-        # baseline = network.Baseline().to(device)
-        for beta in betas:
+
+        # for alpha in np.linspace(0,1,50):
+        for beta in np.linspace(0,50,50):
+        # for alpha in np.linspace(0.5,1,25):
+        # for alpha in [0.1]:
+
+            if dataset_type <= 2:
+                model = network.VAE(latent_dim).to(device)
+            elif dataset_type == 3: #adult
+                model = network.VAETabular(latent_dim,13).to(device)
+            elif dataset_type == 4 or dataset_type == 5: #mh
+                model = network.VAETabular(latent_dim, 9).to(device)
+
+            optimizer = torch.optim.Adam(model.parameters(), lr=0.001)
+            lr_scheduler = LRScheduler(optimizer)
+            early_stopping = EarlyStopping()
 
             loss_history =[]
+
+            if umap:
+                embedding, a_train, x_train, y_train = umap_functions.get_embedding(model,test_set,device,debugging,numworkers)
+                umap_functions.plot(embedding,a_train,x_train,y_train,alpha,dataset_type,method)
+            # return 0
 
             for epoch in range(epochs):
 
@@ -137,10 +155,12 @@ def main():
                     model.zero_grad(set_to_none=True)
 
                     x = x.to(device).float() #batch size x input_dim
+
                     y = y.to(device).float() #batch size x 1
                     a = a.to(device).float()
 
                     yhat, yhat_fair, mu, logvar = model(x,a)
+                    # z = model.getz(x)
 
                     #IB loss
                     if method == 0:
@@ -168,6 +188,10 @@ def main():
                     early_stopping(val_epoch_loss)
                     if early_stopping.early_stop:
                         break
+                if lr_schedule:
+                    val_epoch_loss = evaluations.evaluate(model,val_dataloader,method,beta,epoch,debugging,device,"Val",alpha)
+                    print(val_epoch_loss)
+                    lr_scheduler(val_epoch_loss)
 
                 train_loss /= len(dataloader)
                 # print(f'epoch = {epoch}')
@@ -176,8 +200,16 @@ def main():
 
                 # evaluations.evaluate(model,train_set,batch_size,numworkers,fair,beta,epoch,debugging,device,"Train")
                 evaluations.evaluate(model,test_dataloader,method,beta,epoch,debugging,device,"Test",alpha)
-                evaluations.evaluate_logistic_regression(model, train_set, test_set,device,debugging,numworkers)
+                result = evaluations.evaluate_logistic_regression(model, train_set, test_set,device,debugging,numworkers)
 
+                if umap and epoch >= 5:
+                    embedding, a_train, x_train, y_train = umap_functions.get_embedding(model, test_set, device, debugging, numworkers,representation=True)
+                    umap_functions.plot(embedding, a_train, x_train, y_train,alpha,dataset_type,method,representation=True)
+
+            alphas.append(alpha)
+            results.append(result)
+            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_alphas_beta2', alphas)
+            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_results_beta2', results)
             # # Plot some training images
             # real_batch = next(iter(dataloader))
             # real_batch = next(iter(dataloader))
@@ -195,6 +227,7 @@ def main():
             print(f"alpha = {alpha}")
             print(f"numworkers = {numworkers}")
             print(f"representation_dim = {latent_dim}")
+            print(f"batch size = {batch_size}")
             print(description)
             # print(loss_history)
             # print(testloss_history)

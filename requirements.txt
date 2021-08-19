@@ -1,0 +1,13 @@
+numpy==1.16.3
+tqdm==4.50.2
+umap==0.1.1
+torchvision==0.4.0
+scikit_image==0.18.1
+torch==1.9.0
+matplotlib==3.0.2
+seaborn==0.11.1
+pandas==1.0.3
+Pillow==8.3.1
+progressbar33==2.4
+scikit_learn==0.24.2
+skimage==0.0

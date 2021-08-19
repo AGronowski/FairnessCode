@@ -2,14 +2,10 @@ import torch
 import torchvision
 from torchvision import transforms
 from skimage import io, transform
-import random
 import numpy as np
 import pandas as pd
 from sklearn import preprocessing
-import argparse
-import matplotlib.pyplot as plt
 import os
-from PIL import Image
 
 torch.manual_seed(2020)
 np.random.seed(2020)
@@ -99,7 +95,7 @@ def get_eyepacs(debugging):
                                transforms.CenterCrop(image_size),
                                transforms.ToTensor(),
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                           ])
+                           ]) #scales to [-1,1]
 
 
     if debugging:
@@ -119,11 +115,12 @@ def get_eyepacs(debugging):
 def get_celeba(debugging,dataset):
     root_dir = '../data/celeba_small'
     image_size = 128
-    transform = transforms.Compose([transforms.Resize(image_size),
+    transform = transforms.Compose([
+        transforms.Resize(image_size),
                                transforms.CenterCrop(image_size),
                                transforms.ToTensor(),
                                transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
-                           ])
+                           ]) #scales to [-1,1]
 
     if debugging:
 
@@ -271,6 +268,83 @@ def get_adult(task='fairness'):
 
     return trainset, testset
 
+
+def get_mh_balanced(dataset_type):
+    if dataset_type == 4:
+        age_train_data = pd.read_csv('../data/mental_health/AgeBinary_train_data.csv')
+        age_train_labels = pd.read_csv('../data/mental_health/AgeBinary_train_labels.csv')
+
+        age_test_data = pd.read_csv('../data/mental_health/AgeBinary_test_data.csv')
+        age_test_labels = pd.read_csv('../data/mental_health/AgeBinary_test_labels.csv')
+
+        age_val_data = pd.read_csv('../data/mental_health/AgeBinary_val_data.csv')
+        age_val_labels = pd.read_csv('../data/mental_health/AgeBinary_val_labels.csv')
+
+
+        # age_train_data = age_train_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_train = age_train_data.drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        S_train = age_train_labels['AgeBinary'].to_numpy()
+        Y_hat_train = age_train_labels['treatment'].to_numpy()
+
+        # age_test_data = age_test_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_test = age_test_data.drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        S_test = age_test_labels['AgeBinary'].to_numpy()
+        Y_hat_test = age_test_labels['treatment'].to_numpy()
+
+        # age_test_data = age_test_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_val = age_val_data.drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        S_val = age_val_labels['AgeBinary'].to_numpy()
+        Y_hat_val = age_val_labels['treatment'].to_numpy()
+
+        # # mean and std for each column (0 means column) (reduce rowns)
+        X_mean, X_std = X_train.mean(0), X_train.std(0)
+        # normalize data
+        X_train = (X_train - X_mean) / (X_std)
+        X_test = (X_test - X_mean) / (X_std)
+        X_val = (X_val - X_mean) / X_std
+
+        trainset = Adult_dataset(X_train, Y_hat_train, S_train, task='fairness')
+        testset = Adult_dataset(X_test, Y_hat_test, S_test, task='fairness')
+        valset = Adult_dataset(X_val, Y_hat_val, S_val, task='fairness')
+    if dataset_type == 5:
+        age_train_data = pd.read_csv('../data/mental_health/Gender_train_data.csv')
+        age_train_labels = pd.read_csv('../data/mental_health/Gender_train_labels.csv')
+
+        age_test_data = pd.read_csv('../data/mental_health/Gender_test_data.csv')
+        age_test_labels = pd.read_csv('../data/mental_health/Gender_test_labels.csv')
+
+        age_val_data = pd.read_csv('../data/mental_health/Gender_val_data.csv')
+        age_val_labels = pd.read_csv('../data/mental_health/Gender_val_labels.csv')
+
+
+        # age_train_data = age_train_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_train = age_train_data.drop('Age',axis=1).drop('Gender',axis=1).to_numpy()
+        S_train = age_train_labels['Gender'].to_numpy()
+        Y_hat_train = age_train_labels['treatment'].to_numpy()
+
+        # age_test_data = age_test_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_test = age_test_data.drop('Age',axis=1).drop('Gender',axis=1).to_numpy()
+        S_test = age_test_labels['AgeBinary'].to_numpy()
+        Y_hat_test = age_test_labels['treatment'].to_numpy()
+
+        # age_test_data = age_test_data.drop('mh_family_hist',axis=1).drop('mh_disorder_past',axis=1).drop('Age',axis=1).drop('AgeBinary',axis=1).to_numpy()
+        X_val = age_val_data.drop('Age',axis=1).drop('Gender',axis=1).to_numpy()
+        S_val = age_val_labels['AgeBinary'].to_numpy()
+        Y_hat_val = age_val_labels['treatment'].to_numpy()
+
+        # # mean and std for each column (0 means column) (reduce rowns)
+        X_mean, X_std = X_train.mean(0), X_train.std(0)
+        # normalize data
+        X_train = (X_train - X_mean) / (X_std)
+        X_test = (X_test - X_mean) / (X_std)
+        X_val = (X_val - X_mean) / X_std
+
+        trainset = Adult_dataset(X_train, Y_hat_train, S_train, task='fairness')
+        testset = Adult_dataset(X_test, Y_hat_test, S_test, task='fairness')
+        valset = Adult_dataset(X_val, Y_hat_val, S_val, task='fairness')
+    return trainset, testset, valset
+
+
 def get_mh(task='fairness'):
     # header is removed automatically (header=0)
     data = pd.read_csv('../data/mental_health/imputed_cleaned_mental_health.csv')
@@ -343,9 +417,9 @@ def get_mh(task='fairness'):
 #              frame.iloc[1, 1])
 # image = io.imread(img_name)
 
-from shutil import copyfile
-from sys import exit
-from progressbar import progressbar
+# from shutil import copyfile
+# from sys import exit
+# from progressbar import progressbar
 
 '''
 Change .png to .jpeg

@@ -1,19 +1,13 @@
 #!/bin/bash
-#SBATCH --nodes=1
-#SBATCH --ntasks=1
-#SBATCH --cpus-per-task=1
-#SBATCH --mem=175G
-#SBATCH --account=def-hpcg1626
-#SBATCH --qos=gpu
-#SBATCH --time=144:00:0
-#SBATCH --partition=gpu
-#SBATCH --gres gpu:1
+#SBATCH -c 1
+#SBATCH --mem=96G
+#SBATCH --qos=privileged
+#SBATCH --time=24:00:0
 #SBATCH --mail-type=begin          # send email when job ends
 #SBATCH --mail-type=end          # send email when job ends
 #SBATCH --mail-type=fail         # send email if job fails
 #SBATCH --mail-user=adam.gronowski@gmail.com
 
 source ~/ENV/bin/activate
-
 
 python main.py

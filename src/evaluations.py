@@ -144,6 +144,8 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
         print(f"logistic dpgap = {dpgap}")
         print(f"logistic eqoddsgap = {eqoddsgap}")
 
+        return np.array([accuracy,accgap,dpgap,eqoddsgap])
+
 
 
 #gets loss

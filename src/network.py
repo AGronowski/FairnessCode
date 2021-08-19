@@ -1,4 +1,4 @@
-import torch, torchvision
+import torch
 from torch import nn
 from torchvision import models
 
@@ -255,11 +255,13 @@ class EncoderTabular(torch.nn.Module):
             torch.nn.ReLU(),
         )
 
-        self.logvar = torch.nn.Parameter(
-            torch.Tensor([-1.0]))
+        # self.logvar = torch.nn.Parameter(
+        #     torch.Tensor([-1.0]))
 
     def reparametrize(self,mu,logvar):
         std = torch.exp(0.5*logvar)
+
+
         eps = torch.randn_like(std,device=self.device)
         return mu + std*eps
 
@@ -316,6 +318,24 @@ class VAETabular(torch.nn.Module):
         self.fair_decoder = FairDecoderTabular(latent_dim)
 
     def forward(self, x, a):
+        # yhat = 0
+        # yhat_fair = 0
+        # mu_total = 0
+        # logvar_total = 0
+        #
+        # for i in range(12):
+        #     z, mu, logvar = self.encoder(x)
+        #     mu_total += mu
+        #     logvar_total += logvar
+        #     yhat += self.decoder(z)
+        #     yhat_fair += self.fair_decoder(z, a)
+        # yhat /= 12
+        # yhat_fair /= 12
+        # mu_total /= 12
+        # logvar_total /= 12
+        # mu = mu_total
+        # logvar = logvar_total
+
         z, mu, logvar = self.encoder(x)
         yhat = self.decoder(z)
         yhat_fair = self.fair_decoder(z, a)
