@@ -18,9 +18,9 @@ device = 'cuda' if torch.cuda.is_available() else 'cpu'
 
 if device == 'cpu':
     numworkers = 0 #SET TO 0 if running on CPU. Setting to 1 causes uncaught exception with debugger and python crashes
-    debugging = False
+    debugging = True
 else:
-    numworkers = 0
+    numworkers = 32
     debugging = False
 
 
@@ -33,17 +33,22 @@ def main():
     umap = False
 
     epochs = 50
-    batch_size =1024
-    latent_dim = 2
+    batch_size = 64
+    latent_dim = 32
 
-    dataset_type = 3
-    datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh_age','Mh_gender']
+    dataset_type = 0
+    # 0 - 7
+    datasets = ["CelebA_gender","CelebA_race","EyePACS","Adult",'Mh_age','Mh_gender','fairface_gender','fairface_race']
     '''
     0 - CelebA_gender
     1 - CelebA_race
     2 - EyePACS
     '''
-    for method in [1]:
+
+    method = 2
+    # for dataset_type in [7]:
+
+    for method in [0,1,2]:
         methods = ["IB","Skoglund","Combined"]
         '''
         0 - IB
@@ -64,11 +69,14 @@ def main():
         elif dataset_type == 5:
             # train_set, test_set = dataset.get_mh()
             train_set, test_set, valset = dataset.get_mh_balanced(5) #A = gender
+
+        elif dataset_type == 6 or dataset_type == 7:
+            train_set, test_set = dataset.get_fairface(debugging,dataset_type)
         else:
             print("error")
 
 
-        stop_early = False
+        stop_early = True
         lr_schedule =False
 
         if stop_early or lr_schedule:
@@ -112,19 +120,27 @@ def main():
         # #initialize weights
         # model.apply(main_network.weights_init)
 
-        # beta =1
+        beta =1
         alpha = 1
         alphas = []
         results = []
 
+        baseline_only = False
+
+        if baseline_only:
+            evaluations.evaluate_logistic_regression_baseline(train_set,test_set,debugging,numworkers)
+            result = evaluations.evaluate_logistic_regression(model, train_set, test_set, device, debugging, numworkers)
+            print(f'dataset is {datasets[dataset_type]}')
+            return
 
 
-        # for alpha in np.linspace(0,1,50):
-        for beta in np.linspace(0,50,50):
+
+        for alpha in np.linspace(0,0.5,50):
+        # for beta in np.linspace(0,50,50):
         # for alpha in np.linspace(0.5,1,25):
-        # for alpha in [0.1]:
+        # for alpha in [0]:
 
-            if dataset_type <= 2:
+            if dataset_type <= 2 or dataset_type == 6 or dataset_type == 7: #celeba, eyepacs, fairface image datasets
                 model = network.VAE(latent_dim).to(device)
             elif dataset_type == 3: #adult
                 model = network.VAETabular(latent_dim,13).to(device)
@@ -199,6 +215,9 @@ def main():
                 loss_history.append(train_loss)
 
                 # evaluations.evaluate(model,train_set,batch_size,numworkers,fair,beta,epoch,debugging,device,"Train")
+
+                # evaluations.evaluate_logistic_regression_baseline(model,train_set,test_set,device,debugging,numworkers)
+
                 evaluations.evaluate(model,test_dataloader,method,beta,epoch,debugging,device,"Test",alpha)
                 result = evaluations.evaluate_logistic_regression(model, train_set, test_set,device,debugging,numworkers)
 
@@ -208,8 +227,8 @@ def main():
 
             alphas.append(alpha)
             results.append(result)
-            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_alphas_beta2', alphas)
-            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_results_beta2', results)
+            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_alphas', alphas)
+            np.save(f'../results/{datasets[dataset_type]}_{methods[method]}_results', results)
             # # Plot some training images
             # real_batch = next(iter(dataloader))
             # real_batch = next(iter(dataloader))

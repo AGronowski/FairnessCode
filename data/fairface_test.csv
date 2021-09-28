@@ -1,0 +1,102 @@
+,file,age,gender,race,service_test,thirties_or_higher,is_male,is_white,is_black
+0,val/1.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
+1,val/2.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
+2,val/3.jpg,30-39,Male,White,True,1.0,1.0,1.0,0.0
+3,val/4.jpg,20-29,Female,Latino_Hispanic,True,0.0,0.0,0.0,0.0
+4,val/5.jpg,20-29,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
+5,val/6.jpg,30-39,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
+6,val/7.jpg,20-29,Male,Black,True,0.0,1.0,0.0,1.0
+7,val/8.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
+8,val/9.jpg,20-29,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
+9,val/10.jpg,3-9,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
+10,val/11.jpg,more than 70,Female,East Asian,True,1.0,0.0,0.0,0.0
+11,val/12.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
+12,val/13.jpg,40-49,Female,Indian,True,1.0,0.0,0.0,0.0
+13,val/14.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
+14,val/15.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
+15,val/16.jpg,50-59,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
+16,val/17.jpg,30-39,Male,East Asian,False,1.0,1.0,0.0,0.0
+17,val/18.jpg,20-29,Female,White,False,0.0,0.0,1.0,0.0
+18,val/19.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
+19,val/20.jpg,40-49,Female,Middle Eastern,True,1.0,0.0,0.0,0.0
+20,val/21.jpg,20-29,Male,East Asian,True,0.0,1.0,0.0,0.0
+21,val/22.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
+22,val/23.jpg,30-39,Female,White,True,1.0,0.0,1.0,0.0
+23,val/24.jpg,10-19,Female,East Asian,False,0.0,0.0,0.0,0.0
+24,val/25.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
+25,val/26.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
+26,val/27.jpg,20-29,Female,Latino_Hispanic,True,0.0,0.0,0.0,0.0
+27,val/28.jpg,20-29,Female,Southeast Asian,True,0.0,0.0,0.0,0.0
+28,val/29.jpg,3-9,Female,East Asian,False,0.0,0.0,0.0,0.0
+29,val/30.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
+30,val/31.jpg,3-9,Female,Indian,True,0.0,0.0,0.0,0.0
+31,val/32.jpg,40-49,Female,Indian,False,1.0,0.0,0.0,0.0
+32,val/33.jpg,20-29,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
+33,val/34.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
+34,val/35.jpg,60-69,Male,Black,True,1.0,1.0,0.0,1.0
+35,val/36.jpg,50-59,Female,Black,False,1.0,0.0,0.0,1.0
+36,val/37.jpg,40-49,Male,Black,True,1.0,1.0,0.0,1.0
+37,val/38.jpg,40-49,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
+38,val/39.jpg,60-69,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
+39,val/40.jpg,50-59,Female,Indian,False,1.0,0.0,0.0,0.0
+40,val/41.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
+41,val/42.jpg,20-29,Female,Indian,False,0.0,0.0,0.0,0.0
+42,val/43.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
+43,val/44.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
+44,val/45.jpg,0-2,Male,White,False,0.0,1.0,1.0,0.0
+45,val/46.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
+46,val/47.jpg,40-49,Male,White,True,1.0,1.0,1.0,0.0
+47,val/48.jpg,20-29,Female,White,True,0.0,0.0,1.0,0.0
+48,val/49.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
+49,val/50.jpg,20-29,Female,White,True,0.0,0.0,1.0,0.0
+50,val/51.jpg,30-39,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
+51,val/52.jpg,3-9,Male,Middle Eastern,True,0.0,1.0,0.0,0.0
+52,val/53.jpg,50-59,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
+53,val/54.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
+54,val/55.jpg,40-49,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
+55,val/56.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
+56,val/57.jpg,40-49,Female,East Asian,True,1.0,0.0,0.0,0.0
+57,val/58.jpg,3-9,Male,Black,False,0.0,1.0,0.0,1.0
+58,val/59.jpg,30-39,Female,White,False,1.0,0.0,1.0,0.0
+59,val/60.jpg,10-19,Female,Southeast Asian,True,0.0,0.0,0.0,0.0
+60,val/61.jpg,60-69,Male,Black,False,1.0,1.0,0.0,1.0
+61,val/62.jpg,3-9,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
+62,val/63.jpg,3-9,Female,White,False,0.0,0.0,1.0,0.0
+63,val/64.jpg,10-19,Male,East Asian,False,0.0,1.0,0.0,0.0
+64,val/65.jpg,40-49,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
+65,val/66.jpg,30-39,Female,Latino_Hispanic,True,1.0,0.0,0.0,0.0
+66,val/67.jpg,40-49,Female,White,True,1.0,0.0,1.0,0.0
+67,val/68.jpg,3-9,Female,White,True,0.0,0.0,1.0,0.0
+68,val/69.jpg,30-39,Male,Latino_Hispanic,True,1.0,1.0,0.0,0.0
+69,val/70.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
+70,val/71.jpg,more than 70,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
+71,val/72.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
+72,val/73.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
+73,val/74.jpg,30-39,Female,Indian,False,1.0,0.0,0.0,0.0
+74,val/75.jpg,50-59,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
+75,val/76.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
+76,val/77.jpg,40-49,Female,Latino_Hispanic,True,1.0,0.0,0.0,0.0
+77,val/78.jpg,30-39,Male,Black,False,1.0,1.0,0.0,1.0
+78,val/79.jpg,3-9,Female,Middle Eastern,True,0.0,0.0,0.0,0.0
+79,val/80.jpg,30-39,Female,Black,False,1.0,0.0,0.0,1.0
+80,val/81.jpg,30-39,Male,Black,False,1.0,1.0,0.0,1.0
+81,val/82.jpg,10-19,Male,East Asian,False,0.0,1.0,0.0,0.0
+82,val/83.jpg,30-39,Female,White,False,1.0,0.0,1.0,0.0
+83,val/84.jpg,40-49,Male,East Asian,False,1.0,1.0,0.0,0.0
+84,val/85.jpg,3-9,Female,White,False,0.0,0.0,1.0,0.0
+85,val/86.jpg,10-19,Male,Black,False,0.0,1.0,0.0,1.0
+86,val/87.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
+87,val/88.jpg,20-29,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
+88,val/89.jpg,30-39,Male,East Asian,False,1.0,1.0,0.0,0.0
+89,val/90.jpg,50-59,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
+90,val/91.jpg,10-19,Female,Indian,True,0.0,0.0,0.0,0.0
+91,val/92.jpg,10-19,Male,White,False,0.0,1.0,1.0,0.0
+92,val/93.jpg,20-29,Female,Indian,True,0.0,0.0,0.0,0.0
+93,val/94.jpg,50-59,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
+94,val/95.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
+95,val/96.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
+96,val/97.jpg,50-59,Female,Indian,True,1.0,0.0,0.0,0.0
+97,val/98.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
+98,val/99.jpg,20-29,Male,East Asian,True,0.0,1.0,0.0,0.0
+99,val/100.jpg,20-29,Female,East Asian,True,0.0,0.0,0.0,0.0
+100,val/101.jpg,30-39,Female,East Asian,False,1.0,0.0,0.0,0.0

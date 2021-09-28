@@ -4,10 +4,11 @@ import numpy as np
 import metrics
 import cost_functions
 import sklearn.ensemble, sklearn.linear_model, sklearn.dummy
+from sklearn import preprocessing
 
-def evaluate_logistic_regression_baseline(model,trainset,testset,device,debugging,numworkers):
+def evaluate_logistic_regression_baseline(trainset,testset,debugging,numworkers):
     # sets model in evalutation mode
-    model.eval()
+    # model.eval()
     predictor = sklearn.linear_model.LogisticRegression()
     with torch.no_grad():
         '''train '''
@@ -15,11 +16,13 @@ def evaluate_logistic_regression_baseline(model,trainset,testset,device,debuggin
         # X_train = X_train.to(device)
         # Y_train = Y_train.to(device)
 
-        traindataloader = torch.utils.data.DataLoader(trainset, batch_size=128,
+        traindataloader = torch.utils.data.DataLoader(trainset, batch_size=64,
                                                      shuffle=True, num_workers=numworkers)
 
         y_list = []
         x_list = []
+
+        debugging = not (debugging)
 
         for x, y, a in tqdm(traindataloader, disable=not (debugging)):
             y_list.append(y)
@@ -31,11 +34,15 @@ def evaluate_logistic_regression_baseline(model,trainset,testset,device,debuggin
 
         X_train = X_train.cpu()
         Y_train = Y_train.cpu()
-        predictor.fit(X_train.flatten(start_dim=1), Y_train)
+
+        scaler = preprocessing.StandardScaler().fit(X_train.flatten(start_dim=1))
+        X_scaled = scaler.transform(X_train.flatten(start_dim=1))
+        predictor.fit(X_scaled, Y_train)
+
 
         ''' test '''
 
-        testdataloader = torch.utils.data.DataLoader(testset, batch_size=128,
+        testdataloader = torch.utils.data.DataLoader(testset, batch_size=64,
                                                       shuffle=True, num_workers=numworkers)
 
         y_list = []
@@ -63,11 +70,15 @@ def evaluate_logistic_regression_baseline(model,trainset,testset,device,debuggin
         accgap = metrics.get_acc_gap(predictions,y,a)
         dpgap = metrics.get_discrimination(predictions,a)
         eqoddsgap = metrics.get_equalized_odds_gap(predictions,y,a)
+        accmin0, accmin1 = metrics.get_min_accuracy(predictions,y,a)
+
 
         print(f"baseline logistic accuracy = {accuracy}")
         print(f"baseline logistic accgap = {accgap}")
         print(f"baseline logistic dpgap = {dpgap}")
         print(f"baseline logistic eqoddsgap = {eqoddsgap}")
+        print(f"baseline logistic acc_min_0 = {accmin0}")
+        print(f"baseline logistic acc_min_1 = {accmin1}")
 
 def evaluate_logistic_regression(model,trainset,testset,device,debugging,numworkers):
     # sets model in evalutation mode
@@ -102,7 +113,11 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
 
         Z_train = Z_train.cpu()
         Y_train = Y_train.cpu()
-        predictor.fit(Z_train.flatten(start_dim=1), Y_train)
+
+        scaler = preprocessing.StandardScaler().fit(Z_train)
+        Z_scaled = scaler.transform(Z_train)
+        #predictor.fit(Z_train.flatten(start_dim=1), Y_train)
+        predictor.fit(Z_scaled, Y_train)
 
         ''' test '''
 
@@ -138,13 +153,17 @@ def evaluate_logistic_regression(model,trainset,testset,device,debugging,numwork
         accgap = metrics.get_acc_gap(predictions,y,a)
         dpgap = metrics.get_discrimination(predictions,a)
         eqoddsgap = metrics.get_equalized_odds_gap(predictions,y,a)
+        accmin0, accmin1 = metrics.get_min_accuracy(predictions,y,a)
 
         print(f"logistic accuracy = {accuracy}")
         print(f"logistic accgap = {accgap}")
         print(f"logistic dpgap = {dpgap}")
         print(f"logistic eqoddsgap = {eqoddsgap}")
+        print(f"logistic acc_min_0 = {accmin0}")
+        print(f"logistic acc_min_1 = {accmin1}")
 
-        return np.array([accuracy,accgap,dpgap,eqoddsgap])
+
+        return np.array([accuracy,accgap,dpgap,eqoddsgap,accmin0,accmin1])
 
 
 

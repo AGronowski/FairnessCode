@@ -29,10 +29,11 @@ def getimages(csv_file,root_dir,image_size,transform):
 
 class Celeba_dataset(torch.utils.data.Dataset):
 
-    def __init__(self, csv_file, root_dir, transform=None):
+    def __init__(self, csv_file, root_dir, dataset, transform=None):
         self.frame = pd.read_csv(csv_file)
         self.root_dir = root_dir
         self.transform = transform
+        self.dataset = dataset
 
         # self.targets = self.frame.iloc[:,2]
         # self.sensitives = self.frame.iloc[:,3]
@@ -51,7 +52,11 @@ class Celeba_dataset(torch.utils.data.Dataset):
             image = self.transform(image)
 
         target = self.frame.iloc[index,2] #target is age
-        sensitive = self.frame.iloc[index,3] #sensitive is gender
+
+        if self.dataset == 0:
+            sensitive = self.frame.iloc[index,3] #sensitive is gender
+        elif self.dataset == 1:
+            sensitive = self.frame.iloc[index, 4]  # sensitive is race
 
         return image, target, sensitive
 
@@ -84,6 +89,70 @@ class Eyepacs_dataset(torch.utils.data.Dataset):
 
         return image, target, sensitive
 
+class Fairface_dataset(torch.utils.data.Dataset):
+
+    def __init__(self, csv_file, root_dir, dataset, transform=None):
+        self.frame = pd.read_csv(csv_file)
+        self.root_dir = root_dir # "../data/fairface/"
+        self.transform = transform
+        self.dataset = dataset
+
+        # self.targets = self.frame.iloc[:,2]
+        # self.sensitives = self.frame.iloc[:, 4]
+        # self.images = images
+
+
+    def __len__(self):
+        return len(self.frame)
+
+    def __getitem__(self, index):
+        img_name = os.path.join(self.root_dir,
+                                self.frame.iloc[index, 1])
+        image = io.imread(img_name) #numpy.ndarray
+        image = torchvision.transforms.functional.to_pil_image(image) #PIL image
+
+        if self.transform:
+            image = self.transform(image)
+
+        if self.dataset == 6:
+            target = self.frame.iloc[index,6] #target is in thirties
+            sensitive = self.frame.iloc[index,7] #sensitive is is_male
+
+        elif self.dataset == 7:
+            target = self.frame.iloc[index,7] #target is male
+            sensitive = self.frame.iloc[index,9] #sensitive is race_black
+
+        return image, target, sensitive
+
+
+def get_fairface(debugging,dataset_type):
+    root_dir = "../data/fairface/"
+
+    # image_size = 224
+
+    transform = transforms.Compose([transforms.ToTensor(),
+                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                           ]) #scales to [-1,1]
+
+
+    if debugging:
+        trainset = Fairface_dataset('../data/fairface_test.csv',root_dir,dataset_type,
+                                  transform)
+        testset = Fairface_dataset('../data/fairface_test.csv',root_dir,dataset_type,
+                                  transform)
+    else:
+        if dataset_type == 6: #predict age, gender sensitive
+            trainset = Fairface_dataset('../data/fairface_train_good.csv',root_dir,dataset_type,
+                                      transform)
+            testset = Fairface_dataset('../data/fairface_val_good.csv',root_dir,dataset_type,
+                                      transform)
+        elif dataset_type == 7: #race  black is minority
+            trainset = Fairface_dataset('../data/fairface_train_good_3.csv',root_dir,dataset_type,
+                                      transform)
+            testset = Fairface_dataset('../data/fairface_val_good_3.csv',root_dir,dataset_type,
+                                      transform)
+
+    return trainset, testset
 
 
 def get_eyepacs(debugging):
@@ -125,20 +194,20 @@ def get_celeba(debugging,dataset):
     if debugging:
 
         csv_file = '../data/celeba_debugging.csv'
-        trainset = Celeba_dataset(csv_file,root_dir,
+        trainset = Celeba_dataset(csv_file,root_dir,dataset,
                                   transform)
         testset = Celeba_dataset(csv_file,root_dir,transform)
     else:
         if dataset == 0: #gender
-            trainset = Celeba_dataset('../data/celeba_gender_train_jpg.csv',root_dir,
+            trainset = Celeba_dataset('../data/celeba_gender_train_jpg.csv',root_dir,dataset,
                                       transform)
         elif dataset == 1 : #race
-            trainset = Celeba_dataset('../data/celeba_skincolor_train_jpg.csv',root_dir,
+            trainset = Celeba_dataset('../data/celeba_skincolor_train_jpg.csv',root_dir,dataset,
                                       transform)
         else:
             print("error")
             return False
-        testset = Celeba_dataset('../data/celeba_balanced_combo_test_jpg.csv',root_dir,
+        testset = Celeba_dataset('../data/celeba_balanced_combo_test_jpg.csv',root_dir,dataset,
                                   transform)
 
 
@@ -408,6 +477,69 @@ def get_mh(task='fairness'):
     testset = Adult_dataset(X_test, T_test, S_test, task=task)
 
     return trainset, testset
+
+def process_fairface(debugging=True):
+    root_dir = "../data"
+    image_size = 255
+    transform = transforms.Compose([
+                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                           ]) #scales to [-1,1]
+
+    csv_file = '../data/fairface/full sheets/fairface_label_train.csv'
+    frame = pd.read_csv(csv_file)
+    print(frame)
+
+    frame['thirties_or_higher'] = np.nan
+    frame['is_male'] = np.nan
+    frame['is_white'] = np.nan
+    frame['is_black'] = np.nan
+    count_low = 0
+    count_total = 0
+    for i in range(len(frame)):
+        try:
+            a = int(frame['age'][i][0])
+            if a <= 2 or frame['age'][i][1] == '-': #age is 1 digit number
+                print ('t')
+
+                frame['thirties_or_higher'][i] = 0
+                count_low +=1
+            else:
+                print('f')
+                frame['thirties_or_higher'][i] = 1
+            count_total += 1
+        except ValueError:
+            pass
+        if frame['gender'][i] == 'Male':
+            frame['is_male'][i] = 1
+            print('ismale')
+
+        elif frame['gender'][i] == 'Female':
+            frame['is_male'][i] = 0
+            print('no')
+
+        if frame['race'][i] == 'White':
+            frame['is_white'][i] = 1
+        else:
+            frame['is_white'][i] = 0
+
+        if frame['race'][i] == 'Black':
+            frame['is_black'][i] = 1
+        else:
+            frame['is_black'][i] = 0
+
+
+
+    frame['thirties_or_higher'] = frame['thirties_or_higher'].fillna(1)
+    print(frame)
+    print(count_low)
+    print(count_total)
+    print(count_low/count_total)
+
+    frame.to_csv('../data/fairface_train_good_3.csv')
+
+# process_fairface()
+
+
 
 # get_celeba()
 # csv_file = '../data/celeba_gender_train_jpg.csv'

@@ -7,6 +7,18 @@ def get_accuracy(predictions,y):
 
     return accuracy
 
+def get_min_accuracy(predictions,y,a):
+
+    predictions_0 = predictions[a==0]
+    y_0 = y[a==0]
+    accuracy_0 = np.sum(predictions_0==y_0) / (len(y_0) + 1e-10)
+
+    predictions_1 = predictions[a==1]
+    y_1 = y[a==1]
+    accuracy_1 = np.sum(predictions_1==y_1) / (len(y_1) + 1e-10)
+
+    return accuracy_0, accuracy_1
+
 def get_discrimination(predictions,a):
 
     p1 = (predictions == 1)

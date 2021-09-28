@@ -2,7 +2,7 @@
 #SBATCH -c 1
 #SBATCH --mem=96G
 #SBATCH --qos=privileged
-#SBATCH --time=24:00:0
+#SBATCH --time=48:00:0
 #SBATCH --mail-type=begin          # send email when job ends
 #SBATCH --mail-type=end          # send email when job ends
 #SBATCH --mail-type=fail         # send email if job fails
