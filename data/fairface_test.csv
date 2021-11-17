@@ -1,102 +1,100 @@
-,file,age,gender,race,service_test,thirties_or_higher,is_male,is_white,is_black
-0,val/1.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
-1,val/2.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
-2,val/3.jpg,30-39,Male,White,True,1.0,1.0,1.0,0.0
-3,val/4.jpg,20-29,Female,Latino_Hispanic,True,0.0,0.0,0.0,0.0
-4,val/5.jpg,20-29,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
-5,val/6.jpg,30-39,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
-6,val/7.jpg,20-29,Male,Black,True,0.0,1.0,0.0,1.0
-7,val/8.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
-8,val/9.jpg,20-29,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
-9,val/10.jpg,3-9,Male,Southeast Asian,False,0.0,1.0,0.0,0.0
-10,val/11.jpg,more than 70,Female,East Asian,True,1.0,0.0,0.0,0.0
-11,val/12.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
-12,val/13.jpg,40-49,Female,Indian,True,1.0,0.0,0.0,0.0
-13,val/14.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
-14,val/15.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
-15,val/16.jpg,50-59,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
-16,val/17.jpg,30-39,Male,East Asian,False,1.0,1.0,0.0,0.0
-17,val/18.jpg,20-29,Female,White,False,0.0,0.0,1.0,0.0
-18,val/19.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
-19,val/20.jpg,40-49,Female,Middle Eastern,True,1.0,0.0,0.0,0.0
-20,val/21.jpg,20-29,Male,East Asian,True,0.0,1.0,0.0,0.0
-21,val/22.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
-22,val/23.jpg,30-39,Female,White,True,1.0,0.0,1.0,0.0
-23,val/24.jpg,10-19,Female,East Asian,False,0.0,0.0,0.0,0.0
-24,val/25.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
-25,val/26.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
-26,val/27.jpg,20-29,Female,Latino_Hispanic,True,0.0,0.0,0.0,0.0
-27,val/28.jpg,20-29,Female,Southeast Asian,True,0.0,0.0,0.0,0.0
-28,val/29.jpg,3-9,Female,East Asian,False,0.0,0.0,0.0,0.0
-29,val/30.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
-30,val/31.jpg,3-9,Female,Indian,True,0.0,0.0,0.0,0.0
-31,val/32.jpg,40-49,Female,Indian,False,1.0,0.0,0.0,0.0
-32,val/33.jpg,20-29,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
-33,val/34.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
-34,val/35.jpg,60-69,Male,Black,True,1.0,1.0,0.0,1.0
-35,val/36.jpg,50-59,Female,Black,False,1.0,0.0,0.0,1.0
-36,val/37.jpg,40-49,Male,Black,True,1.0,1.0,0.0,1.0
-37,val/38.jpg,40-49,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
-38,val/39.jpg,60-69,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
-39,val/40.jpg,50-59,Female,Indian,False,1.0,0.0,0.0,0.0
-40,val/41.jpg,3-9,Male,East Asian,False,0.0,1.0,0.0,0.0
-41,val/42.jpg,20-29,Female,Indian,False,0.0,0.0,0.0,0.0
-42,val/43.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
-43,val/44.jpg,30-39,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
-44,val/45.jpg,0-2,Male,White,False,0.0,1.0,1.0,0.0
-45,val/46.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
-46,val/47.jpg,40-49,Male,White,True,1.0,1.0,1.0,0.0
-47,val/48.jpg,20-29,Female,White,True,0.0,0.0,1.0,0.0
-48,val/49.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
-49,val/50.jpg,20-29,Female,White,True,0.0,0.0,1.0,0.0
-50,val/51.jpg,30-39,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
-51,val/52.jpg,3-9,Male,Middle Eastern,True,0.0,1.0,0.0,0.0
-52,val/53.jpg,50-59,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
-53,val/54.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
-54,val/55.jpg,40-49,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
-55,val/56.jpg,40-49,Male,White,False,1.0,1.0,1.0,0.0
-56,val/57.jpg,40-49,Female,East Asian,True,1.0,0.0,0.0,0.0
-57,val/58.jpg,3-9,Male,Black,False,0.0,1.0,0.0,1.0
-58,val/59.jpg,30-39,Female,White,False,1.0,0.0,1.0,0.0
-59,val/60.jpg,10-19,Female,Southeast Asian,True,0.0,0.0,0.0,0.0
-60,val/61.jpg,60-69,Male,Black,False,1.0,1.0,0.0,1.0
-61,val/62.jpg,3-9,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
-62,val/63.jpg,3-9,Female,White,False,0.0,0.0,1.0,0.0
-63,val/64.jpg,10-19,Male,East Asian,False,0.0,1.0,0.0,0.0
-64,val/65.jpg,40-49,Male,Latino_Hispanic,False,1.0,1.0,0.0,0.0
-65,val/66.jpg,30-39,Female,Latino_Hispanic,True,1.0,0.0,0.0,0.0
-66,val/67.jpg,40-49,Female,White,True,1.0,0.0,1.0,0.0
-67,val/68.jpg,3-9,Female,White,True,0.0,0.0,1.0,0.0
-68,val/69.jpg,30-39,Male,Latino_Hispanic,True,1.0,1.0,0.0,0.0
-69,val/70.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
-70,val/71.jpg,more than 70,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
-71,val/72.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
-72,val/73.jpg,20-29,Female,Latino_Hispanic,False,0.0,0.0,0.0,0.0
-73,val/74.jpg,30-39,Female,Indian,False,1.0,0.0,0.0,0.0
-74,val/75.jpg,50-59,Male,Middle Eastern,True,1.0,1.0,0.0,0.0
-75,val/76.jpg,20-29,Male,Indian,True,0.0,1.0,0.0,0.0
-76,val/77.jpg,40-49,Female,Latino_Hispanic,True,1.0,0.0,0.0,0.0
-77,val/78.jpg,30-39,Male,Black,False,1.0,1.0,0.0,1.0
-78,val/79.jpg,3-9,Female,Middle Eastern,True,0.0,0.0,0.0,0.0
-79,val/80.jpg,30-39,Female,Black,False,1.0,0.0,0.0,1.0
-80,val/81.jpg,30-39,Male,Black,False,1.0,1.0,0.0,1.0
-81,val/82.jpg,10-19,Male,East Asian,False,0.0,1.0,0.0,0.0
-82,val/83.jpg,30-39,Female,White,False,1.0,0.0,1.0,0.0
-83,val/84.jpg,40-49,Male,East Asian,False,1.0,1.0,0.0,0.0
-84,val/85.jpg,3-9,Female,White,False,0.0,0.0,1.0,0.0
-85,val/86.jpg,10-19,Male,Black,False,0.0,1.0,0.0,1.0
-86,val/87.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
-87,val/88.jpg,20-29,Male,Southeast Asian,True,0.0,1.0,0.0,0.0
-88,val/89.jpg,30-39,Male,East Asian,False,1.0,1.0,0.0,0.0
-89,val/90.jpg,50-59,Male,Middle Eastern,False,1.0,1.0,0.0,0.0
-90,val/91.jpg,10-19,Female,Indian,True,0.0,0.0,0.0,0.0
-91,val/92.jpg,10-19,Male,White,False,0.0,1.0,1.0,0.0
-92,val/93.jpg,20-29,Female,Indian,True,0.0,0.0,0.0,0.0
-93,val/94.jpg,50-59,Female,Latino_Hispanic,False,1.0,0.0,0.0,0.0
-94,val/95.jpg,50-59,Female,East Asian,True,1.0,0.0,0.0,0.0
-95,val/96.jpg,30-39,Male,White,False,1.0,1.0,1.0,0.0
-96,val/97.jpg,50-59,Female,Indian,True,1.0,0.0,0.0,0.0
-97,val/98.jpg,20-29,Male,East Asian,False,0.0,1.0,0.0,0.0
-98,val/99.jpg,20-29,Male,East Asian,True,0.0,1.0,0.0,0.0
-99,val/100.jpg,20-29,Female,East Asian,True,0.0,0.0,0.0,0.0
-100,val/101.jpg,30-39,Female,East Asian,False,1.0,0.0,0.0,0.0
+,Unnamed: 0,age,file,gender,is_black,is_male,is_white,race,service_test,thirties_or_higher
+6,6.0,20-29,val/7.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+34,34.0,60-69,val/35.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+36,36.0,40-49,val/37.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+57,57.0,3-9,val/58.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+60,60.0,60-69,val/61.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+77,77.0,30-39,val/78.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+80,80.0,30-39,val/81.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+85,85.0,10-19,val/86.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+112,112.0,3-9,val/113.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+121,121.0,20-29,val/122.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+131,131.0,30-39,val/132.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+136,136.0,30-39,val/137.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+145,145.0,10-19,val/146.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+146,146.0,20-29,val/147.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+149,149.0,40-49,val/150.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+151,151.0,0-2,val/152.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+164,164.0,3-9,val/165.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+165,165.0,10-19,val/166.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+196,196.0,20-29,val/197.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+198,198.0,50-59,val/199.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+201,201.0,40-49,val/202.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+223,223.0,3-9,val/224.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+230,230.0,3-9,val/231.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+243,243.0,50-59,val/244.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+247,247.0,20-29,val/248.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+281,281.0,20-29,val/282.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+284,284.0,20-29,val/285.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+304,304.0,40-49,val/305.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+315,315.0,3-9,val/316.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+319,319.0,3-9,val/320.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+335,335.0,20-29,val/336.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+338,338.0,30-39,val/339.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+353,353.0,3-9,val/354.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+355,355.0,50-59,val/356.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+356,356.0,30-39,val/357.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+360,360.0,20-29,val/361.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+380,380.0,40-49,val/381.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+381,381.0,10-19,val/382.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+397,397.0,30-39,val/398.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+402,402.0,20-29,val/403.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+403,403.0,3-9,val/404.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+411,411.0,40-49,val/412.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+425,425.0,50-59,val/426.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+427,427.0,3-9,val/428.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+445,445.0,30-39,val/446.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+457,457.0,40-49,val/458.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+473,473.0,20-29,val/474.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+474,474.0,20-29,val/475.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+488,488.0,3-9,val/489.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+499,499.0,3-9,val/500.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+502,502.0,40-49,val/503.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+507,507.0,3-9,val/508.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+513,513.0,3-9,val/514.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+526,526.0,3-9,val/527.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+535,535.0,30-39,val/536.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+553,553.0,50-59,val/554.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+554,554.0,50-59,val/555.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+560,560.0,3-9,val/561.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+578,578.0,30-39,val/579.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+581,581.0,60-69,val/582.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+590,590.0,20-29,val/591.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+594,594.0,more than 70,val/595.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+605,605.0,10-19,val/606.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+606,606.0,30-39,val/607.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+615,615.0,30-39,val/616.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+618,618.0,50-59,val/619.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+619,619.0,20-29,val/620.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+632,632.0,3-9,val/633.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+655,655.0,40-49,val/656.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+660,660.0,30-39,val/661.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+665,665.0,10-19,val/666.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+668,668.0,30-39,val/669.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+684,684.0,10-19,val/685.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+717,717.0,20-29,val/718.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+729,729.0,20-29,val/730.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+731,731.0,40-49,val/732.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+732,732.0,40-49,val/733.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+735,735.0,30-39,val/736.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+755,755.0,10-19,val/756.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+770,770.0,20-29,val/771.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+795,795.0,3-9,val/796.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+816,816.0,3-9,val/817.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+823,823.0,20-29,val/824.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+829,829.0,3-9,val/830.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+857,857.0,10-19,val/858.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+888,888.0,3-9,val/889.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+895,895.0,20-29,val/896.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+901,901.0,30-39,val/902.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+910,910.0,30-39,val/911.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+921,921.0,30-39,val/922.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+930,930.0,3-9,val/931.jpg,Male,1.0,1.0,0.0,Black,0.0,0.0
+946,946.0,30-39,val/947.jpg,Male,1.0,1.0,0.0,Black,0.0,1.0
+954,954.0,20-29,val/955.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+956,956.0,20-29,val/957.jpg,Male,1.0,1.0,0.0,Black,1.0,0.0
+976,976.0,40-49,val/977.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+1048,1048.0,40-49,val/1049.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+1065,1065.0,50-59,val/1066.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+1068,1068.0,30-39,val/1069.jpg,Male,1.0,1.0,0.0,Black,1.0,1.0
+

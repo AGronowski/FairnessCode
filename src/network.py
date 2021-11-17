@@ -120,7 +120,7 @@ class ResnetEncoder(nn.Module):
         return z, mu, logvar
     
 class Decoder(nn.Module):
-    def __init__(self,latent_dim):
+    def __init__(self,latent_dim,output_dim):
         super().__init__()
 
         # self.func = nn.Sequential(
@@ -140,7 +140,7 @@ class Decoder(nn.Module):
         )
 
         self.onelayer = torch.nn.Sequential(
-            torch.nn.Linear(latent_dim, 1),
+            torch.nn.Linear(latent_dim, output_dim),
             # torch.nn.Sigmoid()
         )
 
@@ -151,7 +151,7 @@ class Decoder(nn.Module):
         return z
 
 class FairDecoder(nn.Module):
-    def __init__(self,latent_dim):
+    def __init__(self,latent_dim,output_dim):
         super().__init__()
 
         # self.func = nn.Sequential(
@@ -170,20 +170,18 @@ class FairDecoder(nn.Module):
             # torch.nn.Sigmoid()
         )
 
-
-
-        self.conv = torch.nn.Sequential(
-            torch.nn.BatchNorm2d(50),
-            torch.nn.ReLU6(),
-            torch.nn.ConvTranspose2d(50,5,5,2),
-            torch.nn.BatchNorm2d(5),
-            torch.nn.ReLU6(),
-            torch.nn.ConvTranspose2d(5,3,5,2,padding=1,output_padding=1),
-            torch.nn.Sigmoid()
-        )
+        # self.conv = torch.nn.Sequential(
+        #     torch.nn.BatchNorm2d(50),
+        #     torch.nn.ReLU6(),
+        #     torch.nn.ConvTranspose2d(50,5,5,2),
+        #     torch.nn.BatchNorm2d(5),
+        #     torch.nn.ReLU6(),
+        #     torch.nn.ConvTranspose2d(5,3,5,2,padding=1,output_padding=1),
+        #     torch.nn.Sigmoid()
+        # )
 
         self.onelayer = torch.nn.Sequential(
-            torch.nn.Linear(latent_dim+1, 1),
+            torch.nn.Linear(latent_dim+1, output_dim),
             # torch.nn.Sigmoid()
         )
 
@@ -201,12 +199,12 @@ class FairDecoder(nn.Module):
         # return self.func(torch.cat((z,a),dim=1))
 
 class VAE(nn.Module):
-    def __init__(self,latent_dim):
+    def __init__(self,latent_dim,output_dim=1):
         super().__init__()
 
         self.encoder = ResnetEncoder(latent_dim)
-        self.decoder = Decoder(latent_dim)
-        self.fair_decoder = FairDecoder(latent_dim)
+        self.decoder = Decoder(latent_dim,output_dim)
+        self.fair_decoder = FairDecoder(latent_dim,output_dim)
 
     def forward(self, x, a):
         twelve_sample = False

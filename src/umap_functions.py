@@ -12,6 +12,7 @@ def plot(embedding, a_train,x_train,y_train,alpha,dataset_type,method,representa
 
     methods = ["IB","Skoglund","Combined"]
     method_name = methods[method]
+    method_name = 'RFIB'
 
     save = True
     show = False
@@ -31,7 +32,7 @@ def plot(embedding, a_train,x_train,y_train,alpha,dataset_type,method,representa
         c=[sns.color_palette()[int(x)] for x in a_train])
     plt.gca().set_aspect('equal', 'datalim')
     if representation:
-        plt.title(rf'{dataset} {method_name} $\alpha = ${alpha} A', fontsize=24)
+        plt.title(rf'{dataset} RFIB $\alpha = ${alpha} S', fontsize=24)
     else:
         plt.title(rf'{dataset} original data A', fontsize=24)
 
@@ -48,7 +49,7 @@ def plot(embedding, a_train,x_train,y_train,alpha,dataset_type,method,representa
     plt.scatter(
         embedding[:, 0],
         embedding[:, 1],
-        c=[sns.color_palette()[int(x)+2] for x in y_train])
+        c=[sns.color_palette()[int(x)+8] for x in y_train])
     plt.gca().set_aspect('equal', 'datalim')
     if representation:
         plt.title(rf'{dataset} {method_name} $\alpha = ${alpha} Y', fontsize=24)

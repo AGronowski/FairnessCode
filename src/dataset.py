@@ -6,6 +6,7 @@ import numpy as np
 import pandas as pd
 from sklearn import preprocessing
 import os
+from tqdm import tqdm
 
 torch.manual_seed(2020)
 np.random.seed(2020)
@@ -70,8 +71,6 @@ class Eyepacs_dataset(torch.utils.data.Dataset):
         # self.targets = self.frame.iloc[:,2]
         # self.sensitives = self.frame.iloc[:, 4]
         # self.images = images
-
-
     def __len__(self):
         return len(self.frame)
 
@@ -88,6 +87,34 @@ class Eyepacs_dataset(torch.utils.data.Dataset):
         sensitive = self.frame.iloc[index,4] #sensitive is ita_dark
 
         return image, target, sensitive
+
+#for testing with the aa clinician labels testset
+class Eyepacs_race_test_dataset(torch.utils.data.Dataset):
+
+    def __init__(self, csv_file, root_dir, transform=None):
+        self.frame = pd.read_csv(csv_file)
+        self.root_dir = root_dir
+        self.transform = transform
+
+        # self.targets = self.frame.iloc[:,2]
+        # self.sensitives = self.frame.iloc[:, 4]
+        # self.images = images
+    def __len__(self):
+        return len(self.frame)
+
+    def __getitem__(self, index):
+        img_name = os.path.join(self.root_dir,
+                                self.frame.iloc[index, 1])
+        image = io.imread(img_name) #numpy.ndarray
+        image = torchvision.transforms.functional.to_pil_image(image) #PIL image
+
+        if self.transform:
+            image = self.transform(image)
+
+        target = self.frame.iloc[index,2] #target is diabetic_retinopathy
+
+        return image, target, self.frame.iloc[index, 1] #name
+
 
 class Fairface_dataset(torch.utils.data.Dataset):
 
@@ -142,14 +169,14 @@ def get_fairface(debugging,dataset_type):
                                   transform)
     else:
         if dataset_type == 6: #predict age, gender sensitive
-            trainset = Fairface_dataset('../data/fairface_train_good.csv',root_dir,dataset_type,
+            trainset = Fairface_dataset('../data/fairface_train_nov2.csv',root_dir,dataset_type,
                                       transform)
-            testset = Fairface_dataset('../data/fairface_val_good.csv',root_dir,dataset_type,
+            testset = Fairface_dataset('../data/fairface_val_nov2.csv',root_dir,dataset_type,
                                       transform)
-        elif dataset_type == 7: #race  black is minority
-            trainset = Fairface_dataset('../data/fairface_train_good_3.csv',root_dir,dataset_type,
-                                      transform)
-            testset = Fairface_dataset('../data/fairface_val_good_3.csv',root_dir,dataset_type,
+        elif dataset_type == 7: #predict gender, race sensitive  black is minority
+            trainset = Fairface_dataset('../data/fairface_train_nov2.csv', root_dir, dataset_type,
+                                        transform)
+            testset = Fairface_dataset('../data/fairface_val_nov2.csv',root_dir,dataset_type,
                                       transform)
 
     return trainset, testset
@@ -181,6 +208,37 @@ def get_eyepacs(debugging):
 
     return trainset, testset
 
+# returns ordinary test dataset, aa testset with special dataloader
+def get_testaa_eyepacs():
+    root_dir = "../data/eyepacs_aa"
+
+    image_size = 256
+
+    transform = transforms.Compose([transforms.Resize(image_size),
+                               transforms.CenterCrop(image_size),
+                               transforms.ToTensor(),
+                               transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5)),
+                           ]) #scales to [-1,1]
+
+    #REMOVE THE DEBUGGING
+    # csv_file = '../data/eyepacs_debugging.csv'
+    csv_file = '../data/eyepacs_control_train_jpeg.csv'
+
+    root_dir = "../data/eyepacs_small"
+    trainset = Eyepacs_dataset(csv_file,root_dir,
+                              transform)
+    # testset =  Eyepacs_race_test_dataset('../data/eyepacs_debugging.csv',root_dir,
+    #                               transform)
+
+
+    root_dir = "../data/eyepacs_aa"
+    testset = Eyepacs_race_test_dataset('../data/test_dr_aa_jpeg.csv',root_dir,
+                                  transform)
+
+
+    return trainset, testset
+
+
 def get_celeba(debugging,dataset):
     root_dir = '../data/celeba_small'
     image_size = 128
@@ -196,7 +254,7 @@ def get_celeba(debugging,dataset):
         csv_file = '../data/celeba_debugging.csv'
         trainset = Celeba_dataset(csv_file,root_dir,dataset,
                                   transform)
-        testset = Celeba_dataset(csv_file,root_dir,transform)
+        testset = Celeba_dataset(csv_file,root_dir,dataset,transform)
     else:
         if dataset == 0: #gender
             trainset = Celeba_dataset('../data/celeba_gender_train_jpg.csv',root_dir,dataset,
@@ -478,6 +536,67 @@ def get_mh(task='fairness'):
 
     return trainset, testset
 
+
+class MNIST_dataset(torch.utils.data.Dataset):
+
+    def __init__(self, data, targets, sensitive, transform=None):
+        # data is (num_examples, 3, 28, 28) with 1 of the 3 rows containing the image data, rest 0s
+        # data hidden is list of numbers 0,1,2
+        self.data = data
+        self.targets = targets
+        self.sensitive = sensitive
+        self.transform = transform
+        self.target_vals = 10
+        self.hidden_vals = 3
+
+    def __getitem__(self, index):
+        image, target, sensitive = self.data[index], self.targets[index], self.sensitive[index]
+        # pil-python imaging library
+        image, target, sensitive = torchvision.transforms.functional.to_pil_image(image), int(target), int(sensitive)
+        # trainsform is trainset.transform / testset.transform
+        if self.transform is not None:
+            image = self.transform(image)
+
+        return image, target, sensitive
+
+
+    def __len__(self):
+        return len(self.targets)
+
+def get_mnist(debugging=False):
+    # Load normal MNIST dataset
+    trainset = torchvision.datasets.MNIST(root='../data', train=True, download=True, \
+                                          transform=torchvision.transforms.Compose(
+                                              [torchvision.transforms.ToTensor(), ]))
+    testset = torchvision.datasets.MNIST(root='../data', train=False, download=True, \
+                                         transform=torchvision.transforms.Compose(
+                                             [torchvision.transforms.ToTensor(), ]))
+
+    # Add the color and normalize to 0..1
+    N_tr = len(trainset)  # 60000
+    data_n = torch.zeros(N_tr, 3, 28, 28)
+    sensitive = torch.arange(len(trainset.targets)) % 3 % 2  # list of numbers from 0 to 2  1/3 2/3 split
+    # mnist data gets added to either row 0, 1, or 2
+    # for each n, 1 28x28 with data, 2 28x28 of 0s
+    for n in range(N_tr):
+        data_n[n, sensitive[n]] = trainset.data[n]  # shape (28,28)
+    data_n /= 255.0
+    trainset = MNIST_dataset(data_n, trainset.targets, sensitive, trainset.transform)
+
+    N_tst = len(testset)
+    data_n = torch.zeros(N_tst, 3, 28, 28)
+    sensitive = torch.arange(len(testset.targets)) % 3 % 2
+    for n in range(N_tst):
+        data_n[n, sensitive[n]] = testset.data[n]
+    data_n /= 255.0
+    testset = MNIST_dataset(data_n, testset.targets, sensitive, testset.transform)
+
+    if debugging:
+        return testset, testset
+
+    return trainset, testset
+
+
 def process_fairface(debugging=True):
     root_dir = "../data"
     image_size = 255
@@ -535,12 +654,125 @@ def process_fairface(debugging=True):
     print(count_total)
     print(count_low/count_total)
 
-    frame.to_csv('../data/fairface_train_good_3.csv')
+    frame.to_csv('../data/fairface_train_nov2.csv')
 
 # process_fairface()
 
+'''
+Get stats on dataset
+
+import pandas as pd
+csv_file = '../data/celeba_gender_train_jpg.csv'
+
+csv_file = '../data/celeba_balanced_combo_test_jpg.csv'
+csv_file = '../data/fairface_val_nov2.csv'
+frame = pd.read_csv(csv_file)
+frame[['is_black','is_male']].sum()
+frame[['Old','Female']].mean()
 
 
+frame.loc[(frame['Old']==True) & (frame['Female']==True)].sum()
+frame.loc[(frame['is_male']==True) & (frame['is_black']==True)].sum()
+
+
+
+csv_file = '../data/fairface_val_good_oct27.csv'
+frame = pd.read_csv(csv_file)
+frame.loc[(frame['is_male']==True) & (frame['is_black']==True)].sum()
+
+'''
+
+def balance_dataset():
+
+    csv_file = '../data/fairface_train_good_3.csv'
+    frame = pd.read_csv(csv_file)
+    newframe = pd.DataFrame()
+    valframe = pd.DataFrame()
+
+    count = 0
+    i = 0
+    while tqdm(count < 6000):
+        row = frame.iloc[i]
+        if row['is_male']==True and row['is_black']==True:
+            if count <5500:
+                newframe = newframe.append(row)
+            else:
+                valframe = valframe.append(row)
+            count += 1
+        i += 1
+
+    count = 0
+    i = 0
+    while tqdm(count < 6000):
+        row = frame.iloc[i]
+        if row['is_male']==True and row['is_black']==False:
+            if count <5500:
+                newframe = newframe.append(row)
+            else:
+                valframe = valframe.append(row)
+            count += 1
+        i += 1
+
+    count = 0
+    i = 0
+    while tqdm(count < 6000):
+        row = frame.iloc[i]
+        if row['is_male']==False and row['is_black']==False:
+            if count <5500:
+                newframe = newframe.append(row)
+            else:
+                valframe = valframe.append(row)
+            count += 1
+        i += 1
+
+    newframe.to_csv('fairface_train_good_oct27.csv')
+    valframe.to_csv('fairface_val_good_oct27.csv')
+
+def balance_dataset_test():
+
+    csv_file = '../data/fairface_val_good_4.csv'
+    frame = pd.read_csv(csv_file)
+    testframe = pd.DataFrame()
+
+    count = 0
+    i = 0
+    while tqdm(count < 750):
+        row = frame.iloc[i]
+        if row['is_male']==True and row['is_black']==True:
+            testframe = testframe.append(row)
+            count += 1
+        i += 1
+
+    count = 0
+    i = 0
+    while tqdm(count < 750):
+        row = frame.iloc[i]
+        if row['is_male']==True and row['is_black']==False:
+            testframe = testframe.append(row)
+            count += 1
+        i += 1
+
+    count = 0
+    i = 0
+    while tqdm(count < 750):
+        row = frame.iloc[i]
+        if row['is_male']==False and row['is_black']==False:
+            testframe = testframe.append(row)
+            count += 1
+        i += 1
+
+    count = 0
+    i = 0
+    while tqdm(count < 750):
+        row = frame.iloc[i]
+        if row['is_male']==False and row['is_black']==True:
+            testframe = testframe.append(row)
+            count += 1
+        i += 1
+
+    testframe.to_csv('fairface_test_good_oct27.csv')
+
+# balance_dataset_test()
 # get_celeba()
 # csv_file = '../data/celeba_gender_train_jpg.csv'
 # frame = pd.read_csv(csv_file)
@@ -549,7 +781,7 @@ def process_fairface(debugging=True):
 #              frame.iloc[1, 1])
 # image = io.imread(img_name)
 
-# from shutil import copyfile
+from shutil import copyfile
 # from sys import exit
 # from progressbar import progressbar
 
@@ -557,10 +789,9 @@ def process_fairface(debugging=True):
 Change .png to .jpeg
 '''
 
-# csv_file = '../data/eyepacs_control_train.csv'
+# csv_file = '../data/test_dr_aa.csv'
 # frame = pd.read_csv(csv_file)
 # root_dir = '../../eyepacs/train'
-#
 # dir = '../../eyepacs_small'
 # from progressbar import progressbar
 #
@@ -570,16 +801,16 @@ Change .png to .jpeg
 #     name = name_beginning + 'jpeg'
 #     frame.iloc[i, 1] = name
 #
-# frame.to_csv("eyepacs_control_train_jpeg.csv",index=False)
+# frame.to_csv("../data/test_dr_aa_jpeg.csv",index=False)
 
 '''
 Copy image into another folder
 '''
 
-# csv_file = '../data/eyepacs_control_train_jpeg.csv'
+# csv_file = '../data/test_dr_aa_jpeg.csv'
 # frame = pd.read_csv(csv_file)
-# root_dir = '../../eyepacs/test'
-# dir = '../../eyepacs_small'
+# root_dir = '../../eyepacs/train'
+# dir = '../data/eyepacs_aa'
 #
 # for i in progressbar(range(len(frame))):
 #     img_path = os.path.join(root_dir,
@@ -589,6 +820,8 @@ Copy image into another folder
 #
 #     try:
 #         copyfile(img_path, output_path)
-#         print(img_path)
+#         # print(img_path)
 #     except:
-#         print("Unexpected error:")
+#         print("fail")
+#         print(img_path)
+#
